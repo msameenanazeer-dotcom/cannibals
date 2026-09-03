@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Missionaries and Cannibals</title>
+
+    <title>Missionaries and Cannibals Solver</title>
 
     <style>
+
         * {
             box-sizing: border-box;
         }
@@ -13,18 +16,17 @@
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #dff3ff, #b9e3ff);
+            background: linear-gradient(135deg, #d9f2ff, #b5e4ff);
             min-height: 100vh;
-            color: #222;
         }
 
-        .game-container {
+        .container {
             width: 95%;
             max-width: 1200px;
-            margin: 30px auto;
+            margin: 25px auto;
             background: white;
-            border-radius: 20px;
             padding: 25px;
+            border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
@@ -34,40 +36,32 @@
             margin-bottom: 10px;
         }
 
-        .instructions {
-            background: #eaf6ff;
-            border-radius: 15px;
+        .problem {
+            background: #eaf7ff;
             padding: 15px;
+            border-radius: 15px;
             text-align: center;
             margin-bottom: 20px;
+            line-height: 1.5;
         }
 
-        .instructions strong {
-            color: #c0392b;
-        }
-
-        .game-board {
+        .game {
             display: flex;
             min-height: 500px;
+            border: 3px solid #4caf50;
             border-radius: 15px;
             overflow: hidden;
-            border: 3px solid #55a84f;
         }
 
         .bank {
             width: 30%;
             background: #8bd17b;
             padding: 20px;
-            position: relative;
         }
 
         .river {
             width: 40%;
-            background: linear-gradient(
-                to bottom,
-                #40a9e8,
-                #2196d3
-            );
+            background: #249ddd;
             position: relative;
             overflow: hidden;
         }
@@ -75,7 +69,6 @@
         .bank h2 {
             text-align: center;
             color: #185b25;
-            margin-top: 5px;
         }
 
         .people {
@@ -87,78 +80,46 @@
         }
 
         .person {
-            width: 70px;
-            height: 90px;
-            border: 2px solid #333;
+            width: 75px;
+            height: 95px;
             border-radius: 12px;
-            cursor: pointer;
+            border: 2px solid #333;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            cursor: pointer;
             transition: 0.2s;
-            user-select: none;
         }
 
         .person:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 10px rgba(0,0,0,0.25);
         }
 
         .missionary {
-            background: #fff;
+            background: white;
         }
 
         .cannibal {
             background: #ff7518;
         }
 
-        .person .emoji {
+        .emoji {
             font-size: 35px;
         }
 
         .person small {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: bold;
         }
 
-        .boat {
+        /* WATER LINES */
+
+        .water-line {
             position: absolute;
-            width: 150px;
-            min-height: 90px;
-            background: #8b4513;
-            border-radius: 10px 10px 60px 60px;
-            bottom: 35px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 5px;
-            padding: 8px;
-            cursor: pointer;
-            transition: left 0.7s ease;
-            border: 3px solid #63300e;
-        }
-
-        .boat.left {
-            left: 10px;
-        }
-
-        .boat.right {
-            left: calc(100% - 160px);
-        }
-
-        .boat-person {
-            font-size: 30px;
-            cursor: pointer;
-        }
-
-        .river-line {
-            position: absolute;
-            left: 0;
             width: 100%;
             height: 3px;
-            background: rgba(255,255,255,0.35);
+            background: rgba(255,255,255,0.3);
         }
 
         .line1 {
@@ -173,6 +134,39 @@
             top: 75%;
         }
 
+        /* BOAT */
+
+        .boat {
+            position: absolute;
+            bottom: 40px;
+            width: 160px;
+            min-height: 90px;
+            background: #8b4513;
+            border: 4px solid #63300e;
+            border-radius: 10px 10px 60px 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            transition: left 1s ease;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .boat-left {
+            left: 10px;
+        }
+
+        .boat-right {
+            left: calc(100% - 170px);
+        }
+
+        .boat-person {
+            font-size: 32px;
+        }
+
+        /* CONTROLS */
+
         .controls {
             text-align: center;
             margin-top: 20px;
@@ -180,51 +174,78 @@
 
         button {
             border: none;
-            padding: 12px 25px;
+            padding: 13px 25px;
             margin: 5px;
             border-radius: 10px;
+            color: white;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
             background: #1976d2;
-            color: white;
         }
 
         button:hover {
             background: #125ca5;
         }
 
+        .solve {
+            background: #16a34a;
+        }
+
+        .solve:hover {
+            background: #08752f;
+        }
+
         .reset {
-            background: #e74c3c;
+            background: #e53935;
         }
 
         .reset:hover {
-            background: #c0392b;
+            background: #b71c1c;
         }
 
         .status {
             text-align: center;
             font-size: 20px;
             font-weight: bold;
-            margin: 15px;
+            margin-top: 20px;
             min-height: 30px;
         }
 
         .info {
             display: flex;
             justify-content: center;
-            gap: 30px;
+            gap: 40px;
             margin-top: 15px;
-            font-size: 17px;
+            font-size: 18px;
             font-weight: bold;
         }
 
-        .selected {
-            outline: 4px solid #ffeb3b;
+        .solution-box {
+            margin-top: 20px;
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
         }
 
-        @media (max-width: 800px) {
-            .game-board {
+        .solution-box h3 {
+            color: #174d7a;
+        }
+
+        #solutionSteps {
+            line-height: 1.8;
+        }
+
+        .current-step {
+            background: #fff59d;
+            padding: 5px 10px;
+            border-radius: 6px;
+        }
+
+        @media(max-width:800px) {
+
+            .game {
                 flex-direction: column;
             }
 
@@ -234,50 +255,50 @@
             }
 
             .bank {
-                min-height: 260px;
+                min-height: 280px;
             }
 
             .river {
-                min-height: 220px;
+                min-height: 250px;
             }
 
-            .boat {
-                bottom: 20px;
-            }
         }
+
     </style>
 </head>
 
 <body>
 
-<div class="game-container">
+<div class="container">
 
     <h1>⛵ Missionaries and Cannibals Problem</h1>
 
-    <div class="instructions">
+    <div class="problem">
+
+        <b>AI Problem</b>
+
         <p>
-            Three missionaries and three cannibals must cross the river.
+            Three missionaries and three cannibals must cross a river.
+            The boat can carry a maximum of two people.
         </p>
 
         <p>
-            The boat can carry a maximum of <strong>2 people</strong>.
-        </p>
-
-        <p>
-            <strong>Rule:</strong>
+            <b>Rule:</b>
             Cannibals must never outnumber missionaries on either bank
             when missionaries are present.
         </p>
 
         <p>
-            <strong>How to play:</strong>
-            Click people to put them in the boat, then click the boat to cross.
+            Click <b>Solve Automatically</b> to watch the AI solve the puzzle.
         </p>
+
     </div>
 
-    <div class="game-board">
+
+    <div class="game">
 
         <!-- LEFT BANK -->
+
         <div class="bank">
 
             <h2>🌳 LEFT BANK</h2>
@@ -286,19 +307,23 @@
 
         </div>
 
+
         <!-- RIVER -->
+
         <div class="river">
 
-            <div class="river-line line1"></div>
-            <div class="river-line line2"></div>
-            <div class="river-line line3"></div>
+            <div class="water-line line1"></div>
+            <div class="water-line line2"></div>
+            <div class="water-line line3"></div>
 
-            <div id="boat" class="boat left" onclick="moveBoat()">
+            <div id="boat" class="boat boat-left">
             </div>
 
         </div>
 
+
         <!-- RIGHT BANK -->
+
         <div class="bank">
 
             <h2>🏠 RIGHT BANK</h2>
@@ -309,18 +334,52 @@
 
     </div>
 
+
     <div class="info">
-        <div>🚤 Boat capacity: <span id="capacity">0 / 2</span></div>
-        <div>🔄 Moves: <span id="moves">0</span></div>
+
+        <div>
+            ⛵ Boat:
+            <span id="boatSide">Left</span>
+        </div>
+
+        <div>
+            🔄 Moves:
+            <span id="moves">0</span>
+        </div>
+
     </div>
+
 
     <div id="status" class="status">
-        Select people to put in the boat.
+        Ready to solve!
     </div>
 
+
     <div class="controls">
-        <button onclick="moveBoat()">⛵ Move Boat</button>
-        <button class="reset" onclick="resetGame()">🔄 Reset Game</button>
+
+        <button class="solve" onclick="solveGame()">
+            🧠 Solve Automatically
+        </button>
+
+        <button onclick="nextStep()">
+            ▶️ Next Step
+        </button>
+
+        <button class="reset" onclick="resetGame()">
+            🔄 Reset
+        </button>
+
+    </div>
+
+
+    <div class="solution-box">
+
+        <h3>🧠 AI Solution</h3>
+
+        <div id="solutionSteps">
+            Click "Solve Automatically" to start.
+        </div>
+
     </div>
 
 </div>
@@ -328,86 +387,220 @@
 
 <script>
 
-    // ============================
-    // GAME VARIABLES
-    // ============================
+    /*
+        ==========================================
+        GAME STATE
+        ==========================================
+    */
 
-    let leftMissionaries = 3;
-    let leftCannibals = 3;
+    let state = {
 
-    let rightMissionaries = 0;
-    let rightCannibals = 0;
+        leftM: 3,
+        leftC: 3,
 
-    let boatSide = "left";
+        rightM: 0,
+        rightC: 0,
 
-    let boatMissionaries = 0;
-    let boatCannibals = 0;
+        boat: "left",
 
-    let moves = 0;
+        moves: 0
 
-    let gameOver = false;
+    };
 
 
-    // ============================
-    // DISPLAY GAME
-    // ============================
+    let solution = [];
+
+    let currentStep = 0;
+
+    let solving = false;
+
+
+    /*
+        ==========================================
+        POSSIBLE SOLUTION
+        ==========================================
+
+        CC  -> 
+        C   <-
+        MM  ->
+        C   <-
+        CC  ->
+        C   <-
+        MM  ->
+        C   <-
+        CC  ->
+        C   <-
+        CC  ->
+    */
+
+
+    const winningSolution = [
+
+        {
+            m: 0,
+            c: 2,
+            direction: "right",
+            text: "2 Cannibals cross →"
+        },
+
+        {
+            m: 0,
+            c: 1,
+            direction: "left",
+            text: "1 Cannibal returns ←"
+        },
+
+        {
+            m: 2,
+            c: 0,
+            direction: "right",
+            text: "2 Missionaries cross →"
+        },
+
+        {
+            m: 0,
+            c: 1,
+            direction: "left",
+            text: "1 Cannibal returns ←"
+        },
+
+        {
+            m: 0,
+            c: 2,
+            direction: "right",
+            text: "2 Cannibals cross →"
+        },
+
+        {
+            m: 0,
+            c: 1,
+            direction: "left",
+            text: "1 Cannibal returns ←"
+        },
+
+        {
+            m: 2,
+            c: 0,
+            direction: "right",
+            text: "2 Missionaries cross →"
+        },
+
+        {
+            m: 0,
+            c: 1,
+            direction: "left",
+            text: "1 Cannibal returns ←"
+        },
+
+        {
+            m: 0,
+            c: 2,
+            direction: "right",
+            text: "2 Cannibals cross →"
+        },
+
+        {
+            m: 0,
+            c: 1,
+            direction: "left",
+            text: "1 Cannibal returns ←"
+        },
+
+        {
+            m: 0,
+            c: 2,
+            direction: "right",
+            text: "2 Cannibals cross →"
+        }
+
+    ];
+
+
+    /*
+        ==========================================
+        RENDER PEOPLE
+        ==========================================
+    */
 
     function render() {
 
-        const leftPeople = document.getElementById("leftPeople");
-        const rightPeople = document.getElementById("rightPeople");
+        const left = document.getElementById("leftPeople");
+        const right = document.getElementById("rightPeople");
         const boat = document.getElementById("boat");
 
-        leftPeople.innerHTML = "";
-        rightPeople.innerHTML = "";
+        left.innerHTML = "";
+        right.innerHTML = "";
         boat.innerHTML = "";
 
-        // LEFT BANK
-        for (let i = 0; i < leftMissionaries; i++) {
-            createPerson(leftPeople, "missionary", "left");
+
+        // LEFT MISSIONARIES
+
+        for (let i = 0; i < state.leftM; i++) {
+
+            createPerson(left, "M", "left");
+
         }
 
-        for (let i = 0; i < leftCannibals; i++) {
-            createPerson(leftPeople, "cannibal", "left");
+
+        // LEFT CANNIBALS
+
+        for (let i = 0; i < state.leftC; i++) {
+
+            createPerson(left, "C", "left");
+
         }
 
-        // RIGHT BANK
-        for (let i = 0; i < rightMissionaries; i++) {
-            createPerson(rightPeople, "missionary", "right");
+
+        // RIGHT MISSIONARIES
+
+        for (let i = 0; i < state.rightM; i++) {
+
+            createPerson(right, "M", "right");
+
         }
 
-        for (let i = 0; i < rightCannibals; i++) {
-            createPerson(rightPeople, "cannibal", "right");
+
+        // RIGHT CANNIBALS
+
+        for (let i = 0; i < state.rightC; i++) {
+
+            createPerson(right, "C", "right");
+
         }
 
-        // PEOPLE IN BOAT
-        for (let i = 0; i < boatMissionaries; i++) {
-            createBoatPerson("missionary");
-        }
 
-        for (let i = 0; i < boatCannibals; i++) {
-            createBoatPerson("cannibal");
-        }
+        /*
+            BOAT POSITION
+        */
 
-        // BOAT POSITION
-        if (boatSide === "left") {
-            boat.classList.remove("right");
-            boat.classList.add("left");
+        if (state.boat === "left") {
+
+            boat.classList.remove("boat-right");
+            boat.classList.add("boat-left");
+
         } else {
-            boat.classList.remove("left");
-            boat.classList.add("right");
+
+            boat.classList.remove("boat-left");
+            boat.classList.add("boat-right");
+
         }
 
-        document.getElementById("capacity").textContent =
-            (boatMissionaries + boatCannibals) + " / 2";
 
-        document.getElementById("moves").textContent = moves;
+        document.getElementById("boatSide").textContent =
+            state.boat === "left" ? "Left" : "Right";
+
+
+        document.getElementById("moves").textContent =
+            state.moves;
+
     }
 
 
-    // ============================
-    // CREATE PERSON
-    // ============================
+    /*
+        ==========================================
+        CREATE PERSON
+        ==========================================
+    */
 
     function createPerson(container, type, side) {
 
@@ -415,353 +608,307 @@
 
         person.className =
             "person " +
-            (type === "missionary" ? "missionary" : "cannibal");
+            (type === "M" ? "missionary" : "cannibal");
 
-        person.innerHTML =
-            '<div class="emoji">' +
-            (type === "missionary" ? "👨‍⚕️" : "👹") +
-            '</div>' +
-            '<small>' +
-            (type === "missionary" ? "Missionary" : "Cannibal") +
-            '</small>';
+        person.innerHTML = `
 
-        person.onclick = function () {
-            selectPerson(type, side);
-        };
+            <div class="emoji">
+                ${type === "M" ? "👨‍⚕️" : "👹"}
+            </div>
+
+            <small>
+                ${type === "M" ? "Missionary" : "Cannibal"}
+            </small>
+
+        `;
 
         container.appendChild(person);
+
     }
 
 
-    // ============================
-    // CREATE BOAT PERSON
-    // ============================
+    /*
+        ==========================================
+        SHOW SOLUTION
+        ==========================================
+    */
 
-    function createBoatPerson(type) {
+    function showSolutionList() {
 
-        const person = document.createElement("div");
+        const box = document.getElementById("solutionSteps");
 
-        person.className = "boat-person";
+        box.innerHTML = "";
 
-        person.innerHTML =
-            type === "missionary" ? "👨‍⚕️" : "👹";
+        winningSolution.forEach((step, index) => {
 
-        person.title = "Click to remove from boat";
+            const div = document.createElement("div");
 
-        person.onclick = function (event) {
+            div.id = "step-" + index;
 
-            event.stopPropagation();
+            div.textContent =
+                (index + 1) + ". " + step.text;
 
-            removeFromBoat(type);
+            box.appendChild(div);
 
-        };
+        });
 
-        document.getElementById("boat").appendChild(person);
     }
 
 
-    // ============================
-    // SELECT PERSON
-    // ============================
+    /*
+        ==========================================
+        AUTOMATIC SOLVER
+        ==========================================
+    */
 
-    function selectPerson(type, side) {
+    function solveGame() {
 
-        if (gameOver) {
+        resetGame();
+
+        solving = true;
+
+        currentStep = 0;
+
+        solution = winningSolution;
+
+        showSolutionList();
+
+        document.getElementById("status").textContent =
+            "🧠 AI is solving the puzzle...";
+
+        document.getElementById("status").style.color =
+            "#1976d2";
+
+
+        /*
+            Start automatic animation
+        */
+
+        setTimeout(autoNextStep, 1000);
+
+    }
+
+
+    /*
+        ==========================================
+        AUTOMATIC NEXT STEP
+        ==========================================
+    */
+
+    function autoNextStep() {
+
+        if (!solving) {
             return;
         }
 
-        // Person must be on same side as boat
-        if (side !== boatSide) {
+        if (currentStep >= solution.length) {
 
-            showStatus(
-                "❌ The boat is on the other side!",
-                "red"
-            );
+            solving = false;
 
-            return;
-        }
+            document.getElementById("status").textContent =
+                "🎉 SOLVED! Everyone crossed safely! 🏆";
 
-        // Maximum two people
-        if (boatMissionaries + boatCannibals >= 2) {
-
-            showStatus(
-                "❌ The boat can carry only 2 people!",
-                "red"
-            );
+            document.getElementById("status").style.color =
+                "green";
 
             return;
         }
 
 
-        if (type === "missionary") {
+        executeStep(solution[currentStep]);
 
-            if (side === "left" && leftMissionaries > 0) {
+        highlightStep(currentStep);
 
-                leftMissionaries--;
-                boatMissionaries++;
+        currentStep++;
 
-            } else if (side === "right" && rightMissionaries > 0) {
 
-                rightMissionaries--;
-                boatMissionaries++;
+        setTimeout(autoNextStep, 1200);
 
-            }
+    }
 
-        } else {
 
-            if (side === "left" && leftCannibals > 0) {
+    /*
+        ==========================================
+        MANUAL NEXT STEP
+        ==========================================
+    */
 
-                leftCannibals--;
-                boatCannibals++;
+    function nextStep() {
 
-            } else if (side === "right" && rightCannibals > 0) {
+        if (currentStep >= winningSolution.length) {
 
-                rightCannibals--;
-                boatCannibals++;
+            document.getElementById("status").textContent =
+                "🎉 Puzzle already solved!";
 
-            }
+            return;
         }
 
-        showStatus(
-            "👥 Select another person or move the boat.",
-            "#333"
-        );
+
+        if (solution.length === 0) {
+
+            solution = winningSolution;
+
+            showSolutionList();
+
+        }
+
+
+        executeStep(solution[currentStep]);
+
+        highlightStep(currentStep);
+
+        currentStep++;
+
+
+        if (currentStep === solution.length) {
+
+            document.getElementById("status").textContent =
+                "🎉 SOLVED! Everyone crossed safely! 🏆";
+
+            document.getElementById("status").style.color =
+                "green";
+
+        }
+
+    }
+
+
+    /*
+        ==========================================
+        EXECUTE A SOLUTION STEP
+        ==========================================
+    */
+
+    function executeStep(step) {
+
+        /*
+            If the direction is right,
+            people move from left to right.
+        */
+
+        if (step.direction === "right") {
+
+            state.leftM -= step.m;
+            state.leftC -= step.c;
+
+            state.rightM += step.m;
+            state.rightC += step.c;
+
+            state.boat = "right";
+
+        }
+
+
+        /*
+            If direction is left,
+            people move from right to left.
+        */
+
+        else {
+
+            state.rightM -= step.m;
+            state.rightC -= step.c;
+
+            state.leftM += step.m;
+            state.leftC += step.c;
+
+            state.boat = "left";
+
+        }
+
+
+        state.moves++;
 
         render();
+
     }
 
 
-    // ============================
-    // REMOVE PERSON FROM BOAT
-    // ============================
+    /*
+        ==========================================
+        HIGHLIGHT CURRENT STEP
+        ==========================================
+    */
 
-    function removeFromBoat(type) {
+    function highlightStep(index) {
 
-        if (gameOver) {
-            return;
+        document.querySelectorAll("#solutionSteps div")
+            .forEach(element => {
+
+                element.classList.remove("current-step");
+
+            });
+
+
+        const current =
+            document.getElementById("step-" + index);
+
+        if (current) {
+
+            current.classList.add("current-step");
+
         }
 
-        if (type === "missionary" && boatMissionaries > 0) {
 
-            boatMissionaries--;
+        document.getElementById("status").textContent =
+            "⛵ " + solution[index].text;
 
-            if (boatSide === "left") {
-                leftMissionaries++;
-            } else {
-                rightMissionaries++;
-            }
+        document.getElementById("status").style.color =
+            "#333";
 
-        } else if (type === "cannibal" && boatCannibals > 0) {
-
-            boatCannibals--;
-
-            if (boatSide === "left") {
-                leftCannibals++;
-            } else {
-                rightCannibals++;
-            }
-        }
-
-        showStatus(
-            "👥 Person returned to the bank.",
-            "#333"
-        );
-
-        render();
     }
 
 
-    // ============================
-    // MOVE BOAT
-    // ============================
-
-    function moveBoat() {
-
-        if (gameOver) {
-            return;
-        }
-
-        const passengers =
-            boatMissionaries + boatCannibals;
-
-        // Boat must contain at least one person
-        if (passengers === 0) {
-
-            showStatus(
-                "❌ The boat needs at least one person!",
-                "red"
-            );
-
-            return;
-        }
-
-        // Check current bank before crossing
-        if (!isSafe(
-            leftMissionaries,
-            leftCannibals
-        )) {
-
-            showStatus(
-                "❌ Left bank is unsafe!",
-                "red"
-            );
-
-            return;
-        }
-
-        if (!isSafe(
-            rightMissionaries,
-            rightCannibals
-        )) {
-
-            showStatus(
-                "❌ Right bank is unsafe!",
-                "red"
-            );
-
-            return;
-        }
-
-
-        // Move passengers to opposite bank
-
-        if (boatSide === "left") {
-
-            rightMissionaries += boatMissionaries;
-            rightCannibals += boatCannibals;
-
-            boatSide = "right";
-
-        } else {
-
-            leftMissionaries += boatMissionaries;
-            leftCannibals += boatCannibals;
-
-            boatSide = "left";
-        }
-
-
-        // Empty boat
-        boatMissionaries = 0;
-        boatCannibals = 0;
-
-        moves++;
-
-        // Check safety after crossing
-
-        if (!isSafe(leftMissionaries, leftCannibals)) {
-
-            showStatus(
-                "❌ Game Over! Cannibals outnumber missionaries on the left bank.",
-                "red"
-            );
-
-            gameOver = true;
-            render();
-            return;
-        }
-
-        if (!isSafe(rightMissionaries, rightCannibals)) {
-
-            showStatus(
-                "❌ Game Over! Cannibals outnumber missionaries on the right bank.",
-                "red"
-            );
-
-            gameOver = true;
-            render();
-            return;
-        }
-
-
-        // WIN CONDITION
-
-        if (
-            rightMissionaries === 3 &&
-            rightCannibals === 3
-        ) {
-
-            showStatus(
-                "🎉 YOU WIN! Everyone crossed safely! 🏆",
-                "green"
-            );
-
-            gameOver = true;
-
-        } else {
-
-            showStatus(
-                "⛵ Boat crossed successfully!",
-                "#333"
-            );
-        }
-
-        render();
-    }
-
-
-    // ============================
-    // SAFETY CHECK
-    // ============================
-
-    function isSafe(missionaries, cannibals) {
-
-        // Empty bank is always safe
-        if (missionaries === 0) {
-            return true;
-        }
-
-        // Cannibals cannot outnumber missionaries
-        return missionaries >= cannibals;
-    }
-
-
-    // ============================
-    // STATUS MESSAGE
-    // ============================
-
-    function showStatus(message, color) {
-
-        const status = document.getElementById("status");
-
-        status.textContent = message;
-        status.style.color = color;
-    }
-
-
-    // ============================
-    // RESET GAME
-    // ============================
+    /*
+        ==========================================
+        RESET GAME
+        ==========================================
+    */
 
     function resetGame() {
 
-        leftMissionaries = 3;
-        leftCannibals = 3;
+        solving = false;
 
-        rightMissionaries = 0;
-        rightCannibals = 0;
+        currentStep = 0;
 
-        boatSide = "left";
+        solution = [];
 
-        boatMissionaries = 0;
-        boatCannibals = 0;
+        state = {
 
-        moves = 0;
+            leftM: 3,
+            leftC: 3,
 
-        gameOver = false;
+            rightM: 0,
+            rightC: 0,
 
-        showStatus(
-            "Select people to put in the boat.",
-            "#333"
-        );
+            boat: "left",
+
+            moves: 0
+
+        };
+
+
+        document.getElementById("status").textContent =
+            "Ready to solve!";
+
+        document.getElementById("status").style.color =
+            "#333";
+
+
+        document.getElementById("solutionSteps").innerHTML =
+            'Click "Solve Automatically" to start.';
+
 
         render();
+
     }
 
 
-    // ============================
-    // START GAME
-    // ============================
+    /*
+        ==========================================
+        START
+        ==========================================
+    */
 
     render();
 
@@ -770,3 +917,4 @@
 </body>
 </html>
 
+      
