@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,49 +6,767 @@
     <title>Missionaries and Cannibals</title>
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background: #e0f2ff;
+            background: linear-gradient(135deg, #dff3ff, #b9e3ff);
+            min-height: 100vh;
+            color: #222;
         }
 
-        .container {
-            max-width: 1100px;
-            margin: 40px auto;
+        .game-container {
+            width: 95%;
+            max-width: 1200px;
+            margin: 30px auto;
             background: white;
-            padding: 30px;
             border-radius: 20px;
-            text-align: center;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
         h1 {
+            text-align: center;
             color: #174d7a;
+            margin-bottom: 10px;
+        }
+
+        .instructions {
+            background: #eaf6ff;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .instructions strong {
+            color: #c0392b;
+        }
+
+        .game-board {
+            display: flex;
+            min-height: 500px;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 3px solid #55a84f;
+        }
+
+        .bank {
+            width: 30%;
+            background: #8bd17b;
+            padding: 20px;
+            position: relative;
+        }
+
+        .river {
+            width: 40%;
+            background: linear-gradient(
+                to bottom,
+                #40a9e8,
+                #2196d3
+            );
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bank h2 {
+            text-align: center;
+            color: #185b25;
+            margin-top: 5px;
+        }
+
+        .people {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .person {
+            width: 70px;
+            height: 90px;
+            border: 2px solid #333;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+            user-select: none;
+        }
+
+        .person:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.25);
+        }
+
+        .missionary {
+            background: #fff;
+        }
+
+        .cannibal {
+            background: #ff7518;
+        }
+
+        .person .emoji {
+            font-size: 35px;
+        }
+
+        .person small {
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .boat {
+            position: absolute;
+            width: 150px;
+            min-height: 90px;
+            background: #8b4513;
+            border-radius: 10px 10px 60px 60px;
+            bottom: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 5px;
+            padding: 8px;
+            cursor: pointer;
+            transition: left 0.7s ease;
+            border: 3px solid #63300e;
+        }
+
+        .boat.left {
+            left: 10px;
+        }
+
+        .boat.right {
+            left: calc(100% - 160px);
+        }
+
+        .boat-person {
+            font-size: 30px;
+            cursor: pointer;
+        }
+
+        .river-line {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: rgba(255,255,255,0.35);
+        }
+
+        .line1 {
+            top: 25%;
+        }
+
+        .line2 {
+            top: 50%;
+        }
+
+        .line3 {
+            top: 75%;
+        }
+
+        .controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        button {
+            border: none;
+            padding: 12px 25px;
+            margin: 5px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            background: #1976d2;
+            color: white;
+        }
+
+        button:hover {
+            background: #125ca5;
+        }
+
+        .reset {
+            background: #e74c3c;
+        }
+
+        .reset:hover {
+            background: #c0392b;
+        }
+
+        .status {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 15px;
+            min-height: 30px;
+        }
+
+        .info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 15px;
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .selected {
+            outline: 4px solid #ffeb3b;
+        }
+
+        @media (max-width: 800px) {
+            .game-board {
+                flex-direction: column;
+            }
+
+            .bank,
+            .river {
+                width: 100%;
+            }
+
+            .bank {
+                min-height: 260px;
+            }
+
+            .river {
+                min-height: 220px;
+            }
+
+            .boat {
+                bottom: 20px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="game-container">
+
     <h1>⛵ Missionaries and Cannibals Problem</h1>
 
-    <p>
-        Three missionaries and three cannibals are on one side of a river.
-        A boat can carry a maximum of two people.
-    </p>
+    <div class="instructions">
+        <p>
+            Three missionaries and three cannibals must cross the river.
+        </p>
 
-    <p>
-        <strong>Rule:</strong>
-        Cannibals must never outnumber missionaries on either bank
-        when missionaries are present.
-    </p>
+        <p>
+            The boat can carry a maximum of <strong>2 people</strong>.
+        </p>
 
-    <h2>🌳 LEFT BANK &nbsp;&nbsp;&nbsp; 🌊 RIVER &nbsp;&nbsp;&nbsp; 🏠 RIGHT BANK</h2>
+        <p>
+            <strong>Rule:</strong>
+            Cannibals must never outnumber missionaries on either bank
+            when missionaries are present.
+        </p>
 
-    <p>👨‍⚕️ 👨‍⚕️ 👨‍⚕️</p>
-    <p>👹 👹 👹</p>
+        <p>
+            <strong>How to play:</strong>
+            Click people to put them in the boat, then click the boat to cross.
+        </p>
+    </div>
+
+    <div class="game-board">
+
+        <!-- LEFT BANK -->
+        <div class="bank">
+
+            <h2>🌳 LEFT BANK</h2>
+
+            <div id="leftPeople" class="people"></div>
+
+        </div>
+
+        <!-- RIVER -->
+        <div class="river">
+
+            <div class="river-line line1"></div>
+            <div class="river-line line2"></div>
+            <div class="river-line line3"></div>
+
+            <div id="boat" class="boat left" onclick="moveBoat()">
+            </div>
+
+        </div>
+
+        <!-- RIGHT BANK -->
+        <div class="bank">
+
+            <h2>🏠 RIGHT BANK</h2>
+
+            <div id="rightPeople" class="people"></div>
+
+        </div>
+
+    </div>
+
+    <div class="info">
+        <div>🚤 Boat capacity: <span id="capacity">0 / 2</span></div>
+        <div>🔄 Moves: <span id="moves">0</span></div>
+    </div>
+
+    <div id="status" class="status">
+        Select people to put in the boat.
+    </div>
+
+    <div class="controls">
+        <button onclick="moveBoat()">⛵ Move Boat</button>
+        <button class="reset" onclick="resetGame()">🔄 Reset Game</button>
+    </div>
 
 </div>
 
+
+<script>
+
+    // ============================
+    // GAME VARIABLES
+    // ============================
+
+    let leftMissionaries = 3;
+    let leftCannibals = 3;
+
+    let rightMissionaries = 0;
+    let rightCannibals = 0;
+
+    let boatSide = "left";
+
+    let boatMissionaries = 0;
+    let boatCannibals = 0;
+
+    let moves = 0;
+
+    let gameOver = false;
+
+
+    // ============================
+    // DISPLAY GAME
+    // ============================
+
+    function render() {
+
+        const leftPeople = document.getElementById("leftPeople");
+        const rightPeople = document.getElementById("rightPeople");
+        const boat = document.getElementById("boat");
+
+        leftPeople.innerHTML = "";
+        rightPeople.innerHTML = "";
+        boat.innerHTML = "";
+
+        // LEFT BANK
+        for (let i = 0; i < leftMissionaries; i++) {
+            createPerson(leftPeople, "missionary", "left");
+        }
+
+        for (let i = 0; i < leftCannibals; i++) {
+            createPerson(leftPeople, "cannibal", "left");
+        }
+
+        // RIGHT BANK
+        for (let i = 0; i < rightMissionaries; i++) {
+            createPerson(rightPeople, "missionary", "right");
+        }
+
+        for (let i = 0; i < rightCannibals; i++) {
+            createPerson(rightPeople, "cannibal", "right");
+        }
+
+        // PEOPLE IN BOAT
+        for (let i = 0; i < boatMissionaries; i++) {
+            createBoatPerson("missionary");
+        }
+
+        for (let i = 0; i < boatCannibals; i++) {
+            createBoatPerson("cannibal");
+        }
+
+        // BOAT POSITION
+        if (boatSide === "left") {
+            boat.classList.remove("right");
+            boat.classList.add("left");
+        } else {
+            boat.classList.remove("left");
+            boat.classList.add("right");
+        }
+
+        document.getElementById("capacity").textContent =
+            (boatMissionaries + boatCannibals) + " / 2";
+
+        document.getElementById("moves").textContent = moves;
+    }
+
+
+    // ============================
+    // CREATE PERSON
+    // ============================
+
+    function createPerson(container, type, side) {
+
+        const person = document.createElement("div");
+
+        person.className =
+            "person " +
+            (type === "missionary" ? "missionary" : "cannibal");
+
+        person.innerHTML =
+            '<div class="emoji">' +
+            (type === "missionary" ? "👨‍⚕️" : "👹") +
+            '</div>' +
+            '<small>' +
+            (type === "missionary" ? "Missionary" : "Cannibal") +
+            '</small>';
+
+        person.onclick = function () {
+            selectPerson(type, side);
+        };
+
+        container.appendChild(person);
+    }
+
+
+    // ============================
+    // CREATE BOAT PERSON
+    // ============================
+
+    function createBoatPerson(type) {
+
+        const person = document.createElement("div");
+
+        person.className = "boat-person";
+
+        person.innerHTML =
+            type === "missionary" ? "👨‍⚕️" : "👹";
+
+        person.title = "Click to remove from boat";
+
+        person.onclick = function (event) {
+
+            event.stopPropagation();
+
+            removeFromBoat(type);
+
+        };
+
+        document.getElementById("boat").appendChild(person);
+    }
+
+
+    // ============================
+    // SELECT PERSON
+    // ============================
+
+    function selectPerson(type, side) {
+
+        if (gameOver) {
+            return;
+        }
+
+        // Person must be on same side as boat
+        if (side !== boatSide) {
+
+            showStatus(
+                "❌ The boat is on the other side!",
+                "red"
+            );
+
+            return;
+        }
+
+        // Maximum two people
+        if (boatMissionaries + boatCannibals >= 2) {
+
+            showStatus(
+                "❌ The boat can carry only 2 people!",
+                "red"
+            );
+
+            return;
+        }
+
+
+        if (type === "missionary") {
+
+            if (side === "left" && leftMissionaries > 0) {
+
+                leftMissionaries--;
+                boatMissionaries++;
+
+            } else if (side === "right" && rightMissionaries > 0) {
+
+                rightMissionaries--;
+                boatMissionaries++;
+
+            }
+
+        } else {
+
+            if (side === "left" && leftCannibals > 0) {
+
+                leftCannibals--;
+                boatCannibals++;
+
+            } else if (side === "right" && rightCannibals > 0) {
+
+                rightCannibals--;
+                boatCannibals++;
+
+            }
+        }
+
+        showStatus(
+            "👥 Select another person or move the boat.",
+            "#333"
+        );
+
+        render();
+    }
+
+
+    // ============================
+    // REMOVE PERSON FROM BOAT
+    // ============================
+
+    function removeFromBoat(type) {
+
+        if (gameOver) {
+            return;
+        }
+
+        if (type === "missionary" && boatMissionaries > 0) {
+
+            boatMissionaries--;
+
+            if (boatSide === "left") {
+                leftMissionaries++;
+            } else {
+                rightMissionaries++;
+            }
+
+        } else if (type === "cannibal" && boatCannibals > 0) {
+
+            boatCannibals--;
+
+            if (boatSide === "left") {
+                leftCannibals++;
+            } else {
+                rightCannibals++;
+            }
+        }
+
+        showStatus(
+            "👥 Person returned to the bank.",
+            "#333"
+        );
+
+        render();
+    }
+
+
+    // ============================
+    // MOVE BOAT
+    // ============================
+
+    function moveBoat() {
+
+        if (gameOver) {
+            return;
+        }
+
+        const passengers =
+            boatMissionaries + boatCannibals;
+
+        // Boat must contain at least one person
+        if (passengers === 0) {
+
+            showStatus(
+                "❌ The boat needs at least one person!",
+                "red"
+            );
+
+            return;
+        }
+
+        // Check current bank before crossing
+        if (!isSafe(
+            leftMissionaries,
+            leftCannibals
+        )) {
+
+            showStatus(
+                "❌ Left bank is unsafe!",
+                "red"
+            );
+
+            return;
+        }
+
+        if (!isSafe(
+            rightMissionaries,
+            rightCannibals
+        )) {
+
+            showStatus(
+                "❌ Right bank is unsafe!",
+                "red"
+            );
+
+            return;
+        }
+
+
+        // Move passengers to opposite bank
+
+        if (boatSide === "left") {
+
+            rightMissionaries += boatMissionaries;
+            rightCannibals += boatCannibals;
+
+            boatSide = "right";
+
+        } else {
+
+            leftMissionaries += boatMissionaries;
+            leftCannibals += boatCannibals;
+
+            boatSide = "left";
+        }
+
+
+        // Empty boat
+        boatMissionaries = 0;
+        boatCannibals = 0;
+
+        moves++;
+
+        // Check safety after crossing
+
+        if (!isSafe(leftMissionaries, leftCannibals)) {
+
+            showStatus(
+                "❌ Game Over! Cannibals outnumber missionaries on the left bank.",
+                "red"
+            );
+
+            gameOver = true;
+            render();
+            return;
+        }
+
+        if (!isSafe(rightMissionaries, rightCannibals)) {
+
+            showStatus(
+                "❌ Game Over! Cannibals outnumber missionaries on the right bank.",
+                "red"
+            );
+
+            gameOver = true;
+            render();
+            return;
+        }
+
+
+        // WIN CONDITION
+
+        if (
+            rightMissionaries === 3 &&
+            rightCannibals === 3
+        ) {
+
+            showStatus(
+                "🎉 YOU WIN! Everyone crossed safely! 🏆",
+                "green"
+            );
+
+            gameOver = true;
+
+        } else {
+
+            showStatus(
+                "⛵ Boat crossed successfully!",
+                "#333"
+            );
+        }
+
+        render();
+    }
+
+
+    // ============================
+    // SAFETY CHECK
+    // ============================
+
+    function isSafe(missionaries, cannibals) {
+
+        // Empty bank is always safe
+        if (missionaries === 0) {
+            return true;
+        }
+
+        // Cannibals cannot outnumber missionaries
+        return missionaries >= cannibals;
+    }
+
+
+    // ============================
+    // STATUS MESSAGE
+    // ============================
+
+    function showStatus(message, color) {
+
+        const status = document.getElementById("status");
+
+        status.textContent = message;
+        status.style.color = color;
+    }
+
+
+    // ============================
+    // RESET GAME
+    // ============================
+
+    function resetGame() {
+
+        leftMissionaries = 3;
+        leftCannibals = 3;
+
+        rightMissionaries = 0;
+        rightCannibals = 0;
+
+        boatSide = "left";
+
+        boatMissionaries = 0;
+        boatCannibals = 0;
+
+        moves = 0;
+
+        gameOver = false;
+
+        showStatus(
+            "Select people to put in the boat.",
+            "#333"
+        );
+
+        render();
+    }
+
+
+    // ============================
+    // START GAME
+    // ============================
+
+    render();
+
+</script>
+
 </body>
 </html>
+
